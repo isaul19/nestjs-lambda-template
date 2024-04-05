@@ -1,0 +1,47 @@
+service: nest-lambda-template
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  architecture: arm64
+  stage: dev
+  region: us-east-1
+  memorySize: 2048
+  logRetentionInDays: 1
+  timeout: 10
+
+functions:
+  api:
+    handler: dist/handler.handler
+    name: nest-lambda-template
+
+    events:
+      - http:
+          path: /
+          method: ANY
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - Authorization
+
+      - http:
+          path: /{proxy+}
+          method: ANY
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - Authorization
+
+plugins:
+  - serverless-jetpack
+  - serverless-offline
+
+custom:
+  jetpack:
+    only:
+      - dist
+      - node_modules
+      - package.json
+      - tsconfig.json
